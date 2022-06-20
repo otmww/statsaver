@@ -10,15 +10,17 @@ import (
 	"time"
 )
 
+var ManagerInstance *Manager
+
 var sep = []byte("\n")
 
 type Manager struct {
 	writer io.WriteCloser
 }
 
-func NewManager(workDir, serverName, filePrefix, test string, rotationPeriodSec int64, maxBackups int) (*Manager, error) {
+func NewManager(workDir, serverName, filePrefix, test string, rotationPeriodSec int64, maxBackups int) {
 	if err := os.MkdirAll(workDir, os.ModePerm); err != nil {
-		return nil, err
+		log.Fatal("Fail to create work dir ", err)
 	}
 	writer, err := logging.MakeLJWriter(
 		serverName,
@@ -29,11 +31,11 @@ func NewManager(workDir, serverName, filePrefix, test string, rotationPeriodSec 
 		maxBackups,
 	)
 	if err != nil {
-		return nil, err
+		log.Fatal("Fail to create lj writer ", err)
 	}
-	return &Manager{
+	ManagerInstance = &Manager{
 		writer: writer,
-	}, nil
+	}
 }
 
 func (m *Manager) Save(data []byte) error {
@@ -80,4 +82,3 @@ func (m *Manager) StartUploadJob(upload bool, accessKey, secretKey, region, endp
 	}()
 
 }
-

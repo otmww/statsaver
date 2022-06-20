@@ -20,10 +20,10 @@ func TestManager(t *testing.T) {
 	rotationSec := 1
 	maxBackups := 0
 
-	m, err := NewManager(fileDir, serverName, filePrefix, test, int64(rotationSec), maxBackups)
+	NewManager(fileDir, serverName, filePrefix, test, int64(rotationSec), maxBackups)
 	for i := 0; i < 10; i++ {
 		exampleData := append([]byte("example row "), []byte(fmt.Sprintf("%d", i))...)
-		err = m.Save(exampleData)
+		err := ManagerInstance.Save(exampleData)
 		assert.NoError(t, err)
 	}
 	workDone := make(chan struct{})
@@ -41,6 +41,6 @@ func TestManager(t *testing.T) {
 		workDone <- struct{}{}
 	})
 	<-workDone
-	err = os.RemoveAll(fileDir + "/")
+	err := os.RemoveAll(fileDir + "/")
 	assert.NoError(t, err)
 }
