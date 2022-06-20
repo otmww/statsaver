@@ -1,4 +1,4 @@
-module manager
+module github.com/otmww/statsaver
 
 go 1.18
 
